@@ -108,9 +108,9 @@ export const placeOrderStripe = async (req, res) => {
 //stripe webhook:/stripe
 
 export const stripeWebhooks = async (req, res) => {
-  //stripe gateway initialization
   const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
   const sig = req.headers["stripe-signature"];
+
   let event;
   try {
     event = stripeInstance.webhooks.constructEvent(
@@ -119,52 +119,40 @@ export const stripeWebhooks = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
-     res.status(400).send(`Webhook Error: ${error.message}`);
+    return res.status(400).send(`Webhook Error: ${error.message}`);
   }
+
   // Handle the event
   switch (event.type) {
-    case "payment_intent.succeeded":{
-      const paymentIntent = event.data.object;
-      const paymentIntentId = paymentIntent.id;
+    // ✅ This is the correct event for your flow
+    case "checkout.session.completed": {
+      const session = event.data.object;
+      const { orderId, userId } = session.metadata;
 
-      //getting session metadata
-      const session = await stripeInstance.checkout.sessions.list({
-        payment_intent:paymentIntentId,
-      });
+      // mark payment as successful
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
 
-      const {orderId, userId} = session.data[0].metadata;
+      // clear user cart
+      await User.findByIdAndUpdate(userId, { cartItems: {} });
 
-      //mark payment as successful
-      await Order.findByIdAndUpdate(orderId, {isPaid: true })
-
-      //clear user cart
-      await User.findByIdAndUpdate(userId, { cartItems: {}});
-      
       break;
-
     }
-    case "payment_intent.payment_failed":{
-      const paymentIntent = event.data.object;
-      const paymentIntentId = paymentIntent.id;
 
-      //getting session metadata
-      const session = await stripeInstance.checkout.sessions.list({
-        payment_intent:paymentIntentId,
-      });
+    case "checkout.session.expired": {
+      const session = event.data.object;
+      const { orderId } = session.metadata;
 
-      const {orderId} = session.data[0].metadata;
+      // delete expired order
       await Order.findByIdAndDelete(orderId);
-   break;
+      break;
     }
 
-      
-  
     default:
-      console.error(`Unhandled event type ${event.type}`);
-      break;
+      console.log(`Unhandled event type ${event.type}`);
   }
+
   res.json({ received: true });
-}
+};
 
 
 
@@ -178,8 +166,8 @@ export const getUserOrders = async (req, res) => {
     }
 
     const orders = await Order.find({
-      userId,
-      $or: [{ paymentType: "COD" }, { isPaid: true }],
+      userId
+      
     })
       .populate("items.product address")
       .sort({ createdAt: -1 });
