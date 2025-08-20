@@ -24,51 +24,80 @@ fetchMyOrders();
   }, [user])
 
   return (
-    <div className='mt-16 p-16'>
-      <div className='flex flex-col items-end w-max mb-8'>
-        <p className='text-2xl font-medium uppercase'>My Orders</p>
-        <div className='w-16 h-0.5 bg-primary rounded-full'>
-        </div>
+    
+<div className="mt-10 p-8 max-w-5xl mx-auto">
+  {/* Page Title */}
+  <div className="flex flex-col items-end w-max mb-6">
+    <p className="text-2xl font-semibold uppercase">My Orders</p>
+    <div className="w-16 h-0.5 bg-primary rounded-full"></div>
+  </div>
+
+  {myOrders.map((order, index) => (
+    <div
+      className="border border-gray-200 rounded-lg overflow-hidden mb-6 shadow-sm hover:shadow-md transition p-4"
+      key={index}
+    >
+      {/* Order Header */}
+      <div className="grid grid-cols-12 gap-4 text-gray-600 text-sm items-center">
+        {/* Order ID */}
+        <span className="col-span-5 font-medium text-gray-700 text-left">
+          OrderId: {order._id}
+        </span>
+
+        {/* Payment */}
+        <span className="col-span-3 text-center md:text-left">
+          Payment: {order.paymentType}
+        </span>
+
+        {/* Total */}
+        <span className="col-span-4 text-right font-bold text-gray-800">
+          Total: {currency}{order.amount}
+        </span>
       </div>
-      {myOrders.map((order, index) => (
-        <div className='border border-gray-300 rounded-lg p-4 py-5 mb-10' key={index}>
-          <p className='flex justify-between md:items-center text-gray-400 md:font-medium max-md:flex-col'>
-            <span>OrderId: {order._id}</span>
-            <span>Payment: {order.paymentType}</span>
 
-            <span>Total Amount: {currency}{order.amount}</span>
-
-          </p>
-          {order.items.map((item, index) => (
-
-            <div key={index} className={`relative bg-white text-gray-500/70 ${order.items.length !==index +1 && "border-b"} border-gray-200 flex flex-col md:flex-row md:items-center justify-between p-4 py-5 md:gap-16 w-full max-w-4xl`}>
-              <div className='flex items-center mb-4 md:mb-0'>
-                <div className='bg-primary/10 p-4 rounded-lg'>
-                  <img src={item.product.image[0]} alt="" className='w-16 h-16' />
-                </div>
-                <div className='ml-4'>
-                  <h2 className='text-xl font-medium text-gray-800'>{item.product.name}</h2>
-                  <p>Category:{item.product.category}</p>
-                </div>
-              </div>
-
-              <div className='flex flex-col justify-center md:ml-8 mb-4 md:mb-0'>
-                <p>Quantity:{item.quantity || '1'}</p>
-                <p>Status:{order.status}</p>
-                <p>Date:{new Date(order.createdAt).toLocaleDateString()}</p>
-              </div>
-              <p className='text-primary text-lg font-medium'>
-                 Amount:{currency}{item.product.offerPrice*item.quantity}
-              </p>
-              
-
-
+      {/* Order Items */}
+      {order.items.map((item, idx) => (
+        <div
+          key={idx}
+          className={`grid grid-cols-12 gap-6 border-t border-gray-200 py-4 ${
+            idx === 0 ? "border-t-0" : ""
+          }`}
+        >
+          {/* Product Info */}
+          <div className="col-span-5 flex items-center">
+            <div className="bg-primary/10 p-3 rounded-lg">
+              <img
+                src={item.product.image[0]}
+                alt={item.product.name}
+                className="w-14 h-14 object-contain"
+              />
             </div>
+            <div className="ml-4">
+              <h2 className="text-lg font-semibold text-gray-800">
+                {item.product.name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                Category: {item.product.category}
+              </p>
+            </div>
+          </div>
 
-          ))}
+          {/* Quantity, Status, Date */}
+          <div className="col-span-3 flex flex-col text-sm text-gray-700 md:text-left">
+            <p>Quantity: {item.quantity || "1"}</p>
+            <p>Status: {order.status}</p>
+            <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+          </div>
+
+          {/* Amount */}
+          <p className="col-span-4 text-primary text-lg font-semibold md:text-right">
+            ₹{item.product.offerPrice * item.quantity}
+          </p>
         </div>
       ))}
     </div>
+  ))}
+</div>
   )
 }
 
