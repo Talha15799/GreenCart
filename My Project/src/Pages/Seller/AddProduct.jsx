@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import assets, {categories}   from "../../assets/assets.js";
+import assets, { categories }   from "../../assets/assets.js";
+
 import { useAppContext } from '../../Context/AppContext.jsx';
 import toast from 'react-hot-toast';
 
@@ -53,7 +54,7 @@ const AddProduct = () => {
         }
         event.preventDefault();
     }
-
+    console.log(categories);
   return (
     
         <div className="scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between ">
@@ -90,9 +91,13 @@ const AddProduct = () => {
                     <select onChange={(e)=> setCategory(e.target.value)} value={category}
                      id="category" className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40">
                         <option value="">Select Category</option>
-                       {categories.map((item,index)=>(
-                        <option key={index} value={item.path}>{item.path}</option>
-                       ))}
+                        {categories && Array.isArray(categories) && categories.length > 0 ? (
+                            categories.map((item, index) => (
+                                <option key={index} value={item.path}>{item.path}</option>
+                            ))
+                        ) : (
+                            <option value="">Loading categories...</option>
+                        )}
                     </select>
                 </div>
                 <div className="flex items-center gap-5 flex-wrap">
