@@ -36,7 +36,7 @@ const Cart = () => {
 
     const getUserAddresses = async () => {
         try {
-            const { data } = await axios.get("http://localhost:4000/api/address/get", {
+            const { data } = await axios.get("https://greencart-backend-beta-two.vercel.app/api/address/get", {
                 withCredentials: true,
             });
 
