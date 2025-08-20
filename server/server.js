@@ -10,6 +10,7 @@ import productRouter from "./routes/productroutes.js";
 import cartRouter from "./routes/cartRoute.js";
 import addressRouter from "./routes/addressRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+//import bodyParser from "body-parser";
 import { stripeWebhooks } from "./controllers/orderController.js";
 
 const app=express();
@@ -19,7 +20,7 @@ await connectDB()
 await connectCloudinary()
 
 //allow multiple origin
-const allowedOrigins=['http://localhost:5173']
+const allowedOrigins=['http://localhost:5174']
 
 app.post('/stripe',express.raw({type: 'application/json'}),stripeWebhooks)
 

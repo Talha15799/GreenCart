@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAppContext } from '../Context/AppContext'
 
-const loading = () => {
+const Loading = () => {
   const{navigate}= useAppContext();
   let {search}= useLocation();
   const query = new URLSearchParams(search);
@@ -29,4 +29,4 @@ const loading = () => {
   )
 }
 
-export default loading
+export default Loading

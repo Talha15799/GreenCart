@@ -12,7 +12,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
 import AddAddress from "./Pages/AddAddress";
 import MyOrders from "./Pages/MyOrders";
-import Loading from "./Components/loading";
+import Loading from "./Components/Loading";
 
 // Seller pages
 import SellerLogin from "./Components/Seller/SellerLogin";
