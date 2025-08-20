@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import assets, { categories }   from "../../assets/assets.js";
+import assets from "../../assets/assets.js";
+import { categories } from "../../assets/assets.js";
 
 import { useAppContext } from '../../Context/AppContext.jsx';
 import toast from 'react-hot-toast';
@@ -21,38 +22,70 @@ const AddProduct = () => {
     const[offerPrice, setOfferPrice]=useState('');
     const {axios}=useAppContext()
     
-    const onSubmitHandler =async(event)=>{
-        try{
-            event.preventDefault();
-          const productData={
-                name,
-                description:description.split('\n'),
-                category,
-                price:Number(price),
-                offerPrice:Number(offerPrice)
-            };
-            const formData=new FormData();
-            formData.append('productData',JSON.stringify(productData));
-            for(let i=0;i<files.length;i++){
-             formData.append('images',files[i])
+    const onSubmitHandler = async (event) => {
+        event.preventDefault();
+        
+        try {
+            // Validate required fields
+            if (!name || !description || !category || !price || !offerPrice) {
+                toast.error('Please fill all required fields');
+                return;
             }
 
-          const {data}=await axios.post('/api/product/add',formData)
-          if(data.success){
-            toast.success(data.message)
-            setName('');
-            setDescription('')
-            setCategory('')
-            setPrice('')
-            setOfferPrice('')
-            setFiles([])
-          }else{
-            toast.error(data.message)
-          }
-        }catch(error){
-           toast.error(error.message)
+            // Validate file uploads
+            const validFiles = files.filter(file => file && file.size > 0);
+            if (validFiles.length === 0) {
+                toast.error('Please upload at least one product image');
+                return;
+            }
+
+            // Validate file types
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const invalidFiles = validFiles.filter(file => !allowedTypes.includes(file.type));
+            if (invalidFiles.length > 0) {
+                toast.error('Please upload only JPG, JPEG, or PNG images');
+                return;
+            }
+
+            const productData = {
+                name,
+                description: description.split('\n').filter(line => line.trim()),
+                category,
+                price: Number(price),
+                offerPrice: Number(offerPrice)
+            };
+
+            const formData = new FormData();
+            formData.append('productData', JSON.stringify(productData));
+            
+            // Only append valid files
+            validFiles.forEach(file => {
+                formData.append('images', file);
+            });
+
+            const { data } = await axios.post('/api/product/add', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('sellerToken')}`
+                }
+            });
+
+            if (data.success) {
+                toast.success(data.message);
+                // Reset form
+                setName('');
+                setDescription('');
+                setCategory('');
+                setPrice('');
+                setOfferPrice('');
+                setFiles([]);
+            } else {
+                toast.error(data.message || 'Failed to add product');
+            }
+        } catch (error) {
+            console.error('Error adding product:', error);
+            toast.error(error.response?.data?.message || error.message || 'Failed to add product');
         }
-        event.preventDefault();
     }
     console.log(categories);
   return (
