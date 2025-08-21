@@ -63,7 +63,7 @@ const PlaceOrder = async () => {
         console.log("Selected Address:", selectedAddress);
         console.log("Cart Array:", cartArray);
             if (paymentOption === "COD") {
-                const { data } = await axios.post('/api/order/cod', {
+                const { data } = await axios.post('https://greencart-backend-beta-two.vercel.app/api/order/cod', {
                    // userId: user._id,
                     items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
                     address: selectedAddress._id
@@ -78,7 +78,7 @@ const PlaceOrder = async () => {
                 }
             }else{
                 //place order with stripe
-                const { data } = await axios.post('/api/order/stripe', {
+                const { data } = await axios.post('https://greencart-backend-beta-two.vercel.app/api/order/stripe', {
                    // userId: user._id,
                     items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
                     address: selectedAddress._id

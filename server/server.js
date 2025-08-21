@@ -20,16 +20,30 @@ await connectDB()
 await connectCloudinary()
 
 //allow multiple origin
-const allowedOrigins=['http://localhost:5173','https://greencart-six-mu.vercel.app']
 
 app.post('/stripe',express.raw({type: 'application/json'}),stripeWebhooks)
 
 
 
-//middleware configuration
+const allowedOrigins=['http://localhost:5173','https://greencart-six-mu.vercel.app'];
+
+
+app.use(cors({
+    origin:function (origin,callback){
+        if(!origin || allowedOrigins.includes(origin)){
+            callback(null,true);
+        }else{
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials:true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin:allowedOrigins,credentials:true}));
+
+
 
 app.get('/',(req,res)=> res.send("API is working"));
 app.use('/api/user',userRouter)
