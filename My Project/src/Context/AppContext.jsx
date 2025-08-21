@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:4000"; // Update this to your backend URL
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL; // Update this to your backend URL
 axios.defaults.headers.post["Content-Type"] = "application/json";
+
+console.log("VITE_BACKEND_URL from env:", import.meta.env.VITE_BACKEND_URL);
 
 // Create the context
 export const AppContext = createContext();
