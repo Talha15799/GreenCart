@@ -47,8 +47,12 @@ const AddAddress = () => {
         ...address,
         userId: user._id
       };
-      
-      const { data } = await axios.post('/api/address/add', addressData);
+      const token = localStorage.getItem('token');
+      const { data } = await axios.post('/api/address/add', addressData,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       
       if (data.success) {
         toast.success(data.message);

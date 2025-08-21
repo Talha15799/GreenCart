@@ -14,6 +14,9 @@ const Login = () => {
             event.preventDefault();
             const { data } = await axios.post(`/api/user/${state}`, { name, email, password });
             if (data.success) {
+                if(data.token){
+                    localStorage.setItem('token', data.token);
+                }
                 navigate('/')
                 setUser(data.user)
                 setShowUserLogin(false)
