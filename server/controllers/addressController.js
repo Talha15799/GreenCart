@@ -6,8 +6,14 @@ export const addAddress = async (req, res) => {
     console.log("📩 Request body:", req.body); // Log the request body
     console.log("📩 Content-Type:", req.headers["content-type"]);
 
+    // Get userId from authenticated user (via authUser middleware)
+    const userId = req.userId;
+    
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid or missing userId" });
+    }
+
     const {
-      userId,
       firstName,
       lastName,
       email,
@@ -18,11 +24,6 @@ export const addAddress = async (req, res) => {
       country,
       phone,
     } = req.body;
-
-    // Validate userId
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid userId format" });
-    }
 
     // Validate required fields
     if (

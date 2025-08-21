@@ -22,6 +22,7 @@ export const AppContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState({});
+  
 
   // Fetch seller status
   const fetchSeller = async () => {
@@ -128,7 +129,6 @@ export const AppContextProvider = ({ children }) => {
       }
       try {
         const { data } = await axios.post("/api/cart/update", {
-          userId: user._id,
           cartItems,
         });
         if (!data.success) {
@@ -166,6 +166,7 @@ export const AppContextProvider = ({ children }) => {
     axios,
     fetchProducts,
     setCartItems, // so you can refresh after adding a product
+    fetchUser,
   };
 
   return (

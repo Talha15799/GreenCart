@@ -42,17 +42,8 @@ const AddAddress = () => {
     }
 
     try {
-      // Send the address data directly with userId
-      const addressData = {
-        ...address,
-        userId: user._id
-      };
-      const token = localStorage.getItem('token');
-      const { data } = await axios.post('/api/address/add', addressData,{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      // Send the address data without userId (backend uses authenticated user from cookie)
+      const { data } = await axios.post('/api/address/add', address);
       
       if (data.success) {
         toast.success(data.message);
