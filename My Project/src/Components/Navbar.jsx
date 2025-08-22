@@ -13,9 +13,7 @@ const Navbar = () => {
      const {data}=await axios.get('/api/user/logout',{withCredentials:true});
      if(data.success){
         toast.success(data.message)
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-         setUser(null);
+        setUser(null);
         navigate('/');
      }else{
         toast.error(data.message)

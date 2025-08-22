@@ -8,32 +8,27 @@ const Login = () => {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [rememberMe, setRememberMe] = React.useState(false);
 
     const onSubmitHandler = async (event) => {
         try {
             event.preventDefault();
-            const { data } = await axios.post(`/api/user/${state}`, { name, email, password });
+            const { data } = await axios.post(`/api/user/${state}`, { 
+                name, 
+                email, 
+                password,
+                rememberMe 
+            });
             if (data.success) {
-                if(data.token){
-                    localStorage.setItem('token', data.token);
-                }
                 navigate('/')
                 setUser(data.user)
                 setShowUserLogin(false)
             } else {
                 toast.error(data.message)
-
             }
-
-
         } catch (error) {
             toast.error(error.message)
         }
-
-
-
-
-
     }
 
 
@@ -58,6 +53,21 @@ const Login = () => {
                     <p>Password</p>
                     <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
                 </div>
+                {state === "login" && (
+                    <div className="flex items-center gap-2 w-full">
+                        <input 
+                            type="checkbox" 
+                            id="rememberMe"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="w-4 h-4"
+                        />
+                        <label htmlFor="rememberMe" className="text-sm cursor-pointer">
+                            Remember me
+                        </label>
+                    </div>
+                )}
+                
                 {state === "register" ? (
                     <p>
                         Already have account? <span onClick={() => setState("login")} className="text-primary cursor-pointer">click here</span>

@@ -22,13 +22,18 @@ export const register = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.cookie('token', token, {
-            httpOnly: true, //Prevent javascript to access cookie
-            secure: process.env.NODE_ENV == 'production', //use secure cookies in production
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',//crf protection
-            maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV == 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+        };
 
-        })
+        // Only set maxAge if rememberMe is true (persistent cookie)
+        if (req.body.rememberMe) {
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+        }
+
+        res.cookie('token', token, cookieOptions);
         return res.json({ success: true, user: { email: user.email, name: user.name } })
 
     } catch (error) {
@@ -59,13 +64,18 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.cookie('token', token, {
-            httpOnly: true, 
-            secure: process.env.NODE_ENV == 'production', 
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000, 
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV == 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+        };
 
-        });
+        // Only set maxAge if rememberMe is true (persistent cookie)
+        if (req.body.rememberMe) {
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+        }
+
+        res.cookie('token', token, cookieOptions);
         return res.json({ success: true, user: { email: user.email, name: user.name } })
 
     } catch (error) {
