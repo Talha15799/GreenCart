@@ -25,7 +25,7 @@ export const register = async (req, res) => {
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV == 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict'
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         };
 
         // Only set maxAge if rememberMe is true (persistent cookie)
@@ -107,7 +107,7 @@ export const logout=async(req,res)=>{
    res.clearCookie('token',{
     httpOnly:true,
     secure:process.env.NODE_ENV==='production',
-    sameSite:process.env.NODE_ENV==='production'?'none':'strict'
+    sameSite:process.env.NODE_ENV==='production'?'none':'lax'
    });
 
    return res.json({success:true,message:"Logged Out"})
